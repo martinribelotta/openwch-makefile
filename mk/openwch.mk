@@ -57,13 +57,13 @@ PROJECT_MAP:=$(patsubst %.elf, %.map, $(PROJECT_ELF))
 
 LDFLAGS+=-Wl,-Map=$(strip $(PROJECT_MAP))
 
-ifeq ($(strip $(VERVOSE)),y)
+ifeq ($(strip $(VERBOSE)),y)
 V:=
 else
 V:=@
 endif
 
-all: $(PROJECT_ELF)
+all: $(PROJECT_ELF) $(PROJECT_HEX) $(PROJECT_BIN) $(PROJECT_LST)
 
 $(OUT)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -82,11 +82,15 @@ $(PROJECT_ELF): $(OBJECTS)
 
 %.hex: %.elf
 	@echo HEX $(notdir $@)
-	$(V)(CROSS_PREFIX)objcopy -O ihex $< $@
+	$(V)$(CROSS_PREFIX)objcopy -O ihex $< $@
 
 %.bin: %.elf
 	@echo BIN $(notdir $@)
-	$(V)(CROSS_PREFIX)objcopy -O binary $< $@
+	$(V)$(CROSS_PREFIX)objcopy -O binary $< $@
+
+%.lst: %.elf
+	@echo LST $(notdir $@)
+	$(V)$(CROSS_PREFIX)objdump -dsx $< > $@
 
 print-%:
 	@echo $*: $($*)

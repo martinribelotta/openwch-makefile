@@ -1,5 +1,8 @@
 {
     "terminal.integrated.env.linux": {
         "PATH": "${env:PATH}:/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/"
+    },
+    "files.associations": {
+        "eth_driver.h": "c"
     }
 }

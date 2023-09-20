@@ -9,6 +9,8 @@ LDFLAGS:=
 
 C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.c)
 C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.c)
+H_APP:=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.h)
+H_APP+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.h)
 
 C_SRC+=$(wildcard $(CORE_PATH)/Peripheral/src/*.c)
 ifeq ($(findstring debug.c, $(C_SRC)),)
@@ -28,7 +30,21 @@ INCLUDES+=$(CORE_PATH)/Debug
 INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
 INCLUDES+=$(OPENWCH_PATH)/$(EXAMPLE)/User/
-INCLUDES+=$(sort $(dir $(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/User/*/*.h)))
+INCLUDES+=fix-includes
+INCLUDES+=$(sort $(dir $(H_APP)))
+
+REQUIRE_NET:=$(findstring net_config.h, $(H_APP))
+ifneq ($(REQUIRE_NET),)
+
+REQURIE_ETH_DRIVER:=$(strip $(findstring eth_driver.c, $(C_SRC)))
+ifeq ($(REQURIE_ETH_DRIVER),)
+C_SRC+=$(wildcard $(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/eth_driver.c)
+endif
+
+INCLUDES+=$(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/
+LIB_PATH+=$(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/
+LIBS+=wchnet_float
+endif
 
 DEFINES+=
 
@@ -41,6 +57,8 @@ CFLAGS+=-fdata-sections -ffunction-sections
 
 LDFLAGS+=$(ARCH)
 LDFLAGS+=-T$(LD_SCRIPT)
+LDFLAGS+=$(addprefix -L,$(LIB_PATH))
+LDFLAGS+=$(addprefix -l,$(LIBS))
 LDFLAGS+=-specs=nosys.specs
 LDFLAGS+=-nostartfiles
 LDFLAGS+=-Wl,--print-memory-usage
@@ -86,7 +104,7 @@ $(OUT)/%.o: %.S
 $(PROJECT_ELF): $(OBJECTS)
 	@mkdir -p $(dir $@)
 	@echo LD $(notdir $@)
-	$(V)$(LD) $(LDFLAGS) $(OBJECTS) -o $@
+	$(V)$(LD) $(OBJECTS) $(LDFLAGS) -o $@
 
 %.hex: %.elf
 	@echo HEX $(notdir $@)

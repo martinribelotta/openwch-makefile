@@ -7,13 +7,20 @@ A_SRC:=
 CFLAGS:=
 LDFLAGS:=
 
+C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.c)
+C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.c)
+
 C_SRC+=$(wildcard $(CORE_PATH)/Peripheral/src/*.c)
+ifeq ($(findstring debug.c, $(C_SRC)),)
 C_SRC+=$(wildcard $(CORE_PATH)/Debug/*.c)
+endif
 C_SRC+=$(wildcard $(CORE_PATH)/Core/*.c)
 
-C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/User/*.c)
+LD_SCRIPT:=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/Ld/Link.ld)
 
+ifeq ($(LD_SCRIPT),)
 LD_SCRIPT:=$(CORE_PATH)/Ld/Link.ld
+endif
 
 A_SRC+=$(CORE_PATH)/Startup/startup_ch32v30x_D8C.S
 
@@ -21,6 +28,7 @@ INCLUDES+=$(CORE_PATH)/Debug
 INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
 INCLUDES+=$(OPENWCH_PATH)/$(EXAMPLE)/User/
+INCLUDES+=$(sort $(dir $(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/User/*/*.h)))
 
 DEFINES+=
 

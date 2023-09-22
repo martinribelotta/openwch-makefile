@@ -9,10 +9,10 @@ LDFLAGS:=
 
 USE_FLOAT:=y
 
-C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.c)
-C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.c)
-H_APP:=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.h)
-H_APP+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.h)
+C_SRC+=$(wildcard $(EXAMPLE)/*/*.c)
+C_SRC+=$(wildcard $(EXAMPLE)/*/*/*.c)
+H_APP:=$(wildcard $(EXAMPLE)/*/*/*.h)
+H_APP+=$(wildcard $(EXAMPLE)/*/*.h)
 
 C_SRC+=$(wildcard $(CORE_PATH)/Peripheral/src/*.c)
 ifeq ($(findstring debug.c, $(C_SRC)),)
@@ -20,7 +20,7 @@ C_SRC+=$(wildcard $(CORE_PATH)/Debug/*.c)
 endif
 C_SRC+=$(wildcard $(CORE_PATH)/Core/*.c)
 
-LD_SCRIPT:=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/Ld/Link.ld)
+LD_SCRIPT:=$(wildcard $(EXAMPLE)/Ld/Link.ld)
 
 ifeq ($(LD_SCRIPT),)
 LD_SCRIPT:=$(CORE_PATH)/Ld/Link.ld
@@ -31,7 +31,7 @@ A_SRC+=$(CORE_PATH)/Startup/startup_ch32v30x_D8C.S
 INCLUDES+=$(CORE_PATH)/Debug
 INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
-INCLUDES+=$(OPENWCH_PATH)/$(EXAMPLE)/User/
+INCLUDES+=$(EXAMPLE)/User/
 INCLUDES+=fix-includes
 INCLUDES+=$(sort $(dir $(H_APP)))
 
@@ -48,7 +48,7 @@ LIB_PATH+=$(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/
 LIBS+=wchnet_float
 endif
 
-TEMPLATE_FILE:=$(file < $(OPENWCH_PATH)/$(EXAMPLE)/.cproject)
+TEMPLATE_FILE:=$(file < $(EXAMPLE)/.cproject)
 REQUIRE_UDISK:=$(findstring Udisk_Lib, $(TEMPLATE_FILE))
 ifneq ($(REQUIRE_UDISK),)
 $(info require udisklib)

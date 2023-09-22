@@ -79,7 +79,7 @@ EVT/EXAM/ADC/DualADC_SlowInterleaved
 EVT/EXAM/ADC/ADC_DMA
 EVT/EXAM/ADC/DualADC_RegSimul
 EVT/EXAM/ADC/Discontinuous_mode
-#EVT/EXAM/ADC/Temperature-External channel
+EVT/EXAM/ADC/Temperature-External-Channel
 EVT/EXAM/ADC/DualADC_InjectionSimul
 EVT/EXAM/ADC/DualADC_FastInterleaved
 EVT/EXAM/ADC/Auto_Injection

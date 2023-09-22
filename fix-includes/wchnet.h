@@ -1,1 +1,0 @@
-../openwch-ch32v307/EVT/EXAM/ETH/NetLib/WCHNET.h

@@ -7,6 +7,8 @@ A_SRC:=
 CFLAGS:=
 LDFLAGS:=
 
+USE_FLOAT:=y
+
 C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*.c)
 C_SRC+=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.c)
 H_APP:=$(wildcard $(OPENWCH_PATH)/$(EXAMPLE)/*/*/*.h)
@@ -36,8 +38,8 @@ INCLUDES+=$(sort $(dir $(H_APP)))
 REQUIRE_NET:=$(findstring net_config.h, $(H_APP))
 ifneq ($(REQUIRE_NET),)
 
-REQURIE_ETH_DRIVER:=$(strip $(findstring eth_driver.c, $(C_SRC)))
-ifeq ($(REQURIE_ETH_DRIVER),)
+REQUIRE_ETH_DRIVER:=$(strip $(findstring eth_driver.c, $(C_SRC)))
+ifeq ($(REQUIRE_ETH_DRIVER),)
 C_SRC+=$(wildcard $(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/eth_driver.c)
 endif
 
@@ -46,9 +48,35 @@ LIB_PATH+=$(OPENWCH_PATH)/EVT/EXAM/ETH/NetLib/
 LIBS+=wchnet_float
 endif
 
+TEMPLATE_FILE:=$(file < $(OPENWCH_PATH)/$(EXAMPLE)/.cproject)
+REQUIRE_UDISK:=$(findstring Udisk_Lib, $(TEMPLATE_FILE))
+ifneq ($(REQUIRE_UDISK),)
+$(info require udisklib)
+FS_HS:=$(findstring USBFS, $(EXAMPLE))
+$(info FS/HS: $(FS_HS) in $(EXAMPLE))
+ifeq ($(FS_HS),USBFS)
+$(info use FS)
+UDISK_LIB_BASE:=$(OPENWCH_PATH)/EVT/EXAM/USB/USBFS/Udisk_Lib
+else
+$(info use HS)
+UDISK_LIB_BASE:=$(OPENWCH_PATH)/EVT/EXAM/USB/USBHS/Udisk_Lib
+endif
+
+C_SRC+=$(UDISK_LIB_BASE)/CH32V103UFI.c
+INCLUDES+=$(UDISK_LIB_BASE)/
+LIB_PATH+=$(UDISK_LIB_BASE)/
+LIBS+=RV3UFI
+USE_FLOAT:=n
+
+endif
+
 DEFINES+=
 
+ifeq ($(USE_FLOAT),y)
 ARCH=-march=rv32imafc -mabi=ilp32f
+else
+ARCH=-march=rv32imac -mabi=ilp32
+endif
 
 CFLAGS+=$(ARCH) -Og -g3
 CFLAGS+=$(addprefix -I,$(INCLUDES))

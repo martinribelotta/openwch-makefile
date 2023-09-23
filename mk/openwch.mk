@@ -32,7 +32,6 @@ INCLUDES+=$(CORE_PATH)/Debug
 INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
 INCLUDES+=$(EXAMPLE)/User/
-INCLUDES+=fix-includes
 INCLUDES+=$(sort $(dir $(H_APP)))
 
 REQUIRE_NET:=$(findstring net_config.h, $(H_APP))
@@ -98,7 +97,7 @@ CXX=$(CROSS_PREFIX)g++
 LD=$(CROSS_PREFIX)gcc
 AS=$(CROSS_PREFIX)gcc -x assembler-with-cpp
 
-PROJECT:=$(basename $(realpath $(EXAMPLE)))
+PROJECT:=$(basename $(notdir $(realpath $(EXAMPLE))))
 $(info project is "$(PROJECT)")
 
 OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))

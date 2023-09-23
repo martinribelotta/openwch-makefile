@@ -98,7 +98,8 @@ CXX=$(CROSS_PREFIX)g++
 LD=$(CROSS_PREFIX)gcc
 AS=$(CROSS_PREFIX)gcc -x assembler-with-cpp
 
-PROJECT:=$(basename $(EXAMPLE))
+PROJECT:=$(basename $(realpath $(EXAMPLE)))
+$(info project is "$(PROJECT)")
 
 OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))
 OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.S, %.o, $(A_SRC)))

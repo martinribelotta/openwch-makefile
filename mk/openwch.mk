@@ -14,6 +14,8 @@ C_SRC+=$(wildcard $(EXAMPLE)/*/*/*.c)
 H_APP:=$(wildcard $(EXAMPLE)/*/*/*.h)
 H_APP+=$(wildcard $(EXAMPLE)/*/*.h)
 
+C_SRC+=$(foreach d, $(USE), $(wildcard $(d)/*.c))
+
 C_SRC+=$(wildcard $(CORE_PATH)/Peripheral/src/*.c)
 ifeq ($(findstring debug.c, $(C_SRC)),)
 C_SRC+=$(wildcard $(CORE_PATH)/Debug/*.c)
@@ -33,6 +35,7 @@ INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
 INCLUDES+=$(EXAMPLE)/User/
 INCLUDES+=$(sort $(dir $(H_APP)))
+INCLUDES+=$(foreach d, $(USE), -I$(d))
 
 REQUIRE_NET:=$(findstring net_config.h, $(H_APP))
 ifneq ($(REQUIRE_NET),)

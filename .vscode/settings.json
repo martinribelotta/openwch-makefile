@@ -2,6 +2,7 @@
     "terminal.integrated.env.linux": {
         "PATH": "${env:PATH}:/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/"
     },
+    "cortex-debug.openocdPath.linux": "/opt/MRS_Toolchain_Linux_x64_V1.80/OpenOCD/bin/openocd",
     "files.associations": {
         "eth_driver.h": "c"
     }

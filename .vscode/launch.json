@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "gdbPath": "gdb-multiarch",
+            "objdumpPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/riscv-none-embed-objdump",
+            "linux": {
+                "armToolchainPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/",
+                "toolchainPrefix": "riscv-none-embed"
+            },
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "out/template.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "configFiles": [
+                "wch-riscv.cfg"
+            ]
+        },
+        {
+            "gdbPath": "gdb-multiarch",
+            "objdumpPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/riscv-none-embed-objdump",
+            "linux": {
+                "armToolchainPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/",
+                "toolchainPrefix": "riscv-none-embed"
+            },
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "out/template.elf",
+            "request": "launch"
+        }
+    ]
+}

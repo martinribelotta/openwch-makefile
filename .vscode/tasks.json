@@ -1,0 +1,64 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "make all",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "all",
+                "-j8"
+            ]
+        },
+        {
+            "label": "make clean",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "clean"
+            ]
+        },
+        {
+            "label": "make flash",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "flash"
+            ]
+        },
+        {
+            "label": "target reset",
+            "type": "shell",
+            "command": "wlink",
+            "args": [ "reset" ]
+        },
+        {
+            "label": "target erase",
+            "type": "shell",
+            "command": "wlink",
+            "args": [ "erase" ]
+        },
+        {
+            "label": "open TIO on ttyACM1",
+            "type": "shell",
+            "command": "tio",
+            "args": [
+                "-m", "INLCRNL",
+                "-b", "115200",
+                "/dev/ttyACM1"
+            ],
+            "isBackground": true
+        }
+    ]
+}

@@ -152,3 +152,8 @@ print-%:
 clean:
 	@echo CLEAN
 	$(V)rm -fr $(OUT)
+
+flash: $(PROJECT_ELF)
+	wlink --chip CH32V30X flash $<
+
+.PHONY: clean all flash

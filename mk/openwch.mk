@@ -144,7 +144,7 @@ $(PROJECT_ELF): $(OBJECTS)
 
 %.lst: %.elf
 	@echo LST $(notdir $@)
-	$(V)$(CROSS_PREFIX)objdump -dsx $< > $@
+	$(V)$(CROSS_PREFIX)objdump -dSx $< > $@
 
 print-%:
 	@echo $*: $($*)

@@ -4,6 +4,8 @@
     },
     "cortex-debug.openocdPath.linux": "/opt/wch-openocd/bin/openocd",
     "files.associations": {
-        "eth_driver.h": "c"
+        "eth_driver.h": "c",
+        "debug.h": "c",
+        "ch32v30x.h": "c"
     }
 }

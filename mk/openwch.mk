@@ -5,12 +5,17 @@ DEFINES:=
 C_SRC:=
 A_SRC:=
 CFLAGS:=
+CXXFLAGS:=
 LDFLAGS:=
 
 USE_FLOAT:=y
 
 C_SRC+=$(wildcard $(EXAMPLE)/*/*.c)
 C_SRC+=$(wildcard $(EXAMPLE)/*/*/*.c)
+
+CXX_SRC+=$(wildcard $(EXAMPLE)/*/*.cpp)
+CXX_SRC+=$(wildcard $(EXAMPLE)/*/*/*.cpp)
+
 H_APP:=$(wildcard $(EXAMPLE)/*/*/*.h)
 H_APP+=$(wildcard $(EXAMPLE)/*/*.h)
 
@@ -77,16 +82,27 @@ else
 ARCH=-march=rv32imac -mabi=ilp32
 endif
 
-CFLAGS+=$(ARCH) -Og -g3
-CFLAGS+=$(addprefix -I,$(INCLUDES))
-CFLAGS+=$(addprefix -D,$(DEFINES))
-CFLAGS+=-fdata-sections -ffunction-sections
+COMMON_FLAGS:=$(ARCH) -Og -g3
+COMMON_FLAGS+=$(addprefix -I,$(INCLUDES))
+COMMON_FLAGS+=$(addprefix -D,$(DEFINES))
+COMMON_FLAGS+=-fdata-sections -ffunction-sections
+
+CFLAGS+=$(COMMON_FLAGS)
+CFLAGS+=-std=gnu11
+
+CXXFLAGS+=$(COMMON_FLAGS)
+CXXFLAGS+=-std=gnu++17
+CXXFLAGS+=-fno-rtti
+CXXFLAGS+=-fno-exceptions
+CXXFLAGS+=-fno-non-call-exceptions
+CXXFLAGS+=-fno-threadsafe-statics
 
 LDFLAGS+=$(ARCH)
 LDFLAGS+=-T$(LD_SCRIPT)
 LDFLAGS+=$(addprefix -L,$(LIB_PATH))
 LDFLAGS+=$(addprefix -l,$(LIBS))
 LDFLAGS+=-specs=nosys.specs
+LDFLAGS+=-specs=nano.specs
 LDFLAGS+=-nostartfiles
 LDFLAGS+=-Wl,--print-memory-usage
 LDFLAGS+=-Wl,--gc-sections
@@ -94,7 +110,7 @@ LDFLAGS+=-Wl,--gc-sections
 CROSS_PREFIX:=riscv-none-embed-
 CC=$(CROSS_PREFIX)gcc
 CXX=$(CROSS_PREFIX)g++
-LD=$(CROSS_PREFIX)gcc
+LD=$(if $(CXX_SRC), $(CROSS_PREFIX)g++, $(CROSS_PREFIX)gcc)
 AS=$(CROSS_PREFIX)gcc -x assembler-with-cpp
 
 PROJECT:=$(basename $(notdir $(realpath $(EXAMPLE))))
@@ -102,6 +118,7 @@ $(info project is "$(PROJECT)")
 
 OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))
 OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.S, %.o, $(A_SRC)))
+OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.cpp, %.o, $(CXX_SRC)))
 
 PROJECT_ELF:=$(OUT)/$(PROJECT).elf
 PROJECT_HEX:=$(patsubst %.elf, %.hex, $(PROJECT_ELF))
@@ -123,6 +140,11 @@ $(OUT)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo CC $(notdir $@)
 	$(V)$(CC) $(CFLAGS) -c $< -o $@
+
+$(OUT)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	@echo CXX $(notdir $@)
+	$(V)$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OUT)/%.o: %.S
 	@mkdir -p $(dir $@)
@@ -154,6 +176,7 @@ clean:
 	$(V)rm -fr $(OUT)
 
 flash: $(PROJECT_ELF)
-	wlink --chip CH32V30X flash $<
+	@echo "FLASH $(notdir $<)"
+	$(V)wlink --chip CH32V30X flash $<
 
 .PHONY: clean all flash

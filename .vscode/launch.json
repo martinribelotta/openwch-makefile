@@ -20,19 +20,18 @@
             "servertype": "openocd",
             "configFiles": [
                 "wch-riscv.cfg"
-            ]
-        },
-        {
-            "gdbPath": "gdb-multiarch",
-            "objdumpPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/riscv-none-embed-objdump",
-            "linux": {
-                "armToolchainPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/",
-                "toolchainPrefix": "riscv-none-embed"
-            },
-            "name": "Cortex Debug",
-            "cwd": "${workspaceFolder}",
-            "executable": "out/template.elf",
-            "request": "launch"
+            ],
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [
+                    {
+                        "label": "",
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            }
         }
     ]
 }

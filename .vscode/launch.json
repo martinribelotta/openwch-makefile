@@ -19,8 +19,20 @@
             "runToEntryPoint": "main",
             "servertype": "openocd",
             "configFiles": [
-                "wch-riscv.cfg"
-            ]
+                "interface/wlink.cfg",
+                "target/wch-riscv.cfg"
+            ],
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [
+                    {
+                        "label": "",
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            }
         }
     ]
 }

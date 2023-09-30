@@ -3,5 +3,6 @@ OPENWCH_PATH=openwch-ch32v307
 EXAMPLE=local/template_cpp
 OUT=out
 VERBOSE=n
+USE=RTT
 
 include mk/openwch.mk

@@ -21,6 +21,8 @@ H_APP+=$(wildcard $(EXAMPLE)/*/*.h)
 
 C_SRC+=$(foreach d, $(USE), $(wildcard $(d)/*.c))
 
+CXX_SRC+=$(foreach d, $(USE), $(wildcard $(d)/*.cpp))
+
 C_SRC+=$(wildcard $(CORE_PATH)/Peripheral/src/*.c)
 ifeq ($(findstring debug.c, $(C_SRC)),)
 C_SRC+=$(wildcard $(CORE_PATH)/Debug/*.c)

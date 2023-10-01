@@ -5,7 +5,7 @@
 /* Global Variable */
 s16 Calibrattion_Val = 0;
 u16 adcVal = 0;
-atomic_int nHaveData = 1;
+atomic_int haveData = 0;
 
 void TIM1_PWMOut_Init(u16 arr, u16 psc, u16 ccp);
 void ADC_Function_Init(void);
@@ -24,7 +24,7 @@ int main(void)
 {
     setup();
     while (1) {
-        if (atomic_fetch_or(&nHaveData, 1) == 0) {
+        if (atomic_fetch_and(&haveData, 0)) {
             int val = adcVal;
             printf("ADC %04d\r\n", val);
         }
@@ -62,7 +62,7 @@ void ADC1_2_IRQHandler()
     if(adcTestIRQ(ADC1, ADC_IT_EOC)) {
         u16 RawAdc = adcReadData(ADC1);
         adcVal = saturate(RawAdc + Calibrattion_Val, 4096, 0);
-        atomic_store(&nHaveData, 0);
+        atomic_store(&haveData, 1);
     }
     adcClearIRQ(ADC1, ADC_IT_EOC);
 }

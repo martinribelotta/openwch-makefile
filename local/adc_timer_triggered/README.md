@@ -8,5 +8,5 @@ The code do it:
  - Configure ADC1 CH0 to trigger with TIM1.CC1 output
  - Start TIM1, enable ADC1
  - In ADC interrupt save the value and set flag (using C11 stdatomic)
- - In main loop test (and set) flag and print value if flag is set (use negated logic) 
+ - In main loop test (and clear) flag and print value if flag is set
 

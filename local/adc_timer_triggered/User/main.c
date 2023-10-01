@@ -4,7 +4,7 @@
 
 /* Global Variable */
 s16 Calibrattion_Val = 0;
-u16 adcVal = 0;
+atomic_uint_fast16_t adcVal = 0;
 atomic_int haveData = 0;
 
 void TIM1_PWMOut_Init(u16 arr, u16 psc, u16 ccp);
@@ -16,7 +16,7 @@ void setup()
     SystemCoreClockUpdate();
     printf("SystemClk:%d\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
-    TIM1_PWMOut_Init(1000, 48000 - 1, 50);
+    TIM1_PWMOut_Init(100, 48000 - 1, 50);
     ADC_Function_Init();
 }
 
@@ -25,8 +25,8 @@ int main(void)
     setup();
     while (1) {
         if (atomic_fetch_and(&haveData, 0)) {
-            int val = adcVal;
-            printf("ADC %04d\r\n", val);
+            int val = atomic_load(&adcVal);
+            printf("%04d\r\n", val);
         }
     }
 }
@@ -61,7 +61,7 @@ void ADC1_2_IRQHandler()
 {
     if(adcTestIRQ(ADC1, ADC_IT_EOC)) {
         u16 RawAdc = adcReadData(ADC1);
-        adcVal = saturate(RawAdc + Calibrattion_Val, 4096, 0);
+        atomic_store(&adcVal, saturate(RawAdc + Calibrattion_Val, 4096, 0));
         atomic_store(&haveData, 1);
     }
     adcClearIRQ(ADC1, ADC_IT_EOC);

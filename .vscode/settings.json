@@ -1,4 +1,6 @@
 {
+    "C_Cpp.formatting": "clangFormat",
+    "clang-format.style": "file",
     "terminal.integrated.env.linux": {
         "PATH": "${env:PATH}:/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/"
     },

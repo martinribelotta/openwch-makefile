@@ -42,7 +42,7 @@ INCLUDES+=$(CORE_PATH)/Core
 INCLUDES+=$(CORE_PATH)/Peripheral/inc
 INCLUDES+=$(EXAMPLE)/User/
 INCLUDES+=$(sort $(dir $(H_APP)))
-INCLUDES+=$(foreach d, $(USE), -I$(d))
+INCLUDES+=$(foreach d, $(USE), $(d))
 
 REQUIRE_NET:=$(findstring net_config.h, $(H_APP))
 ifneq ($(REQUIRE_NET),)
@@ -80,6 +80,11 @@ USE_FLOAT:=n
 endif
 
 DEFINES+=
+
+MK_INC:=$(foreach d, $(USE), $(wildcard $(d)/$(d).mk))
+$(info including $(MK_INC))
+
+-include $(MK_INC)
 
 ifeq ($(USE_FLOAT),y)
 ARCH=-march=rv32imafc -mabi=ilp32f
@@ -119,11 +124,6 @@ LD=$(if $(CXX_SRC), $(CROSS_PREFIX)g++, $(CROSS_PREFIX)gcc)
 AS=$(CROSS_PREFIX)gcc -x assembler-with-cpp
 
 PROJECT:=$(basename $(notdir $(realpath $(EXAMPLE))))
-$(info project is "$(PROJECT)")
-
-OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))
-OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.S, %.o, $(A_SRC)))
-OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.cpp, %.o, $(CXX_SRC)))
 
 PROJECT_ELF:=$(OUT)/$(PROJECT).elf
 PROJECT_HEX:=$(patsubst %.elf, %.hex, $(PROJECT_ELF))
@@ -132,6 +132,10 @@ PROJECT_LST:=$(patsubst %.elf, %.lst, $(PROJECT_ELF))
 PROJECT_MAP:=$(patsubst %.elf, %.map, $(PROJECT_ELF))
 
 LDFLAGS+=-Wl,-Map=$(strip $(PROJECT_MAP))
+
+OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))
+OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.S, %.o, $(A_SRC)))
+OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.cpp, %.o, $(CXX_SRC)))
 
 ifeq ($(strip $(VERBOSE)),y)
 V:=

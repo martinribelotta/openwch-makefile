@@ -2,6 +2,23 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "serdev",
+            "type": "pickString",
+            "description": "Serial device",
+            "options": [
+                "/dev/ttyACM0",
+                "/dev/ttyACM1",
+                "/dev/ttyACM2",
+                "/dev/ttyACM3",
+                "/dev/ttyUSB0",
+                "/dev/ttyUSB1",
+                "/dev/ttyUSB2",
+                "/dev/ttyUSB3"
+            ]
+        }
+    ],
     "tasks": [
         {
             "label": "make all",
@@ -56,7 +73,7 @@
             "args": [
                 "-m", "INLCRNL",
                 "-b", "115200",
-                "/dev/ttyACM1"
+                "${input:serdev}"
             ],
             "isBackground": true
         }

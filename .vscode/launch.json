@@ -11,9 +11,10 @@
                 "armToolchainPath": "/opt/MRS_Toolchain_Linux_x64_V1.80/RISC-V Embedded GCC/bin/",
                 "toolchainPrefix": "riscv-none-embed"
             },
+            "preLaunchTask": "make all",
             "name": "Cortex Debug",
             "cwd": "${workspaceFolder}",
-            "executable": "out/template.elf",
+            "executable": "out/firmware.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",

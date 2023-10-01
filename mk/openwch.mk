@@ -123,7 +123,7 @@ CXX=$(CROSS_PREFIX)g++
 LD=$(if $(CXX_SRC), $(CROSS_PREFIX)g++, $(CROSS_PREFIX)gcc)
 AS=$(CROSS_PREFIX)gcc -x assembler-with-cpp
 
-PROJECT:=$(basename $(notdir $(realpath $(EXAMPLE))))
+PROJECT?=$(basename $(notdir $(realpath $(EXAMPLE))))
 
 PROJECT_ELF:=$(OUT)/$(PROJECT).elf
 PROJECT_HEX:=$(patsubst %.elf, %.hex, $(PROJECT_ELF))

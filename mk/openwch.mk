@@ -8,7 +8,13 @@ CFLAGS:=
 CXXFLAGS:=
 LDFLAGS:=
 
+-include $(EXAMPLE)/$(notdir $(EXAMPLE)).mk
+
+MK_INC:=$(foreach d, $(USE), $(wildcard $(d)/$(notdir $(d)).mk))
+
 USE_FLOAT:=y
+
+-include $(MK_INC)
 
 C_SRC+=$(wildcard $(EXAMPLE)/*/*.c)
 C_SRC+=$(wildcard $(EXAMPLE)/*/*/*.c)
@@ -81,11 +87,6 @@ endif
 
 DEFINES+=
 
-MK_INC:=$(foreach d, $(USE), $(wildcard $(d)/$(d).mk))
-$(info including $(MK_INC))
-
--include $(MK_INC)
-
 ifeq ($(USE_FLOAT),y)
 ARCH=-march=rv32imafc -mabi=ilp32f
 else
@@ -137,6 +138,8 @@ OBJECTS:=$(addprefix $(OUT)/, $(patsubst %.c, %.o, $(C_SRC)))
 OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.S, %.o, $(A_SRC)))
 OBJECTS+=$(addprefix $(OUT)/, $(patsubst %.cpp, %.o, $(CXX_SRC)))
 
+DEPS:=$(patsubst %.o, %.d, $(OBJECTS))
+
 ifeq ($(strip $(VERBOSE)),y)
 V:=
 else
@@ -145,15 +148,17 @@ endif
 
 all: $(PROJECT_ELF) $(PROJECT_HEX) $(PROJECT_BIN) $(PROJECT_LST)
 
+-include $(DEPS)
+
 $(OUT)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo CC $(notdir $@)
-	$(V)$(CC) $(CFLAGS) -c $< -o $@
+	$(V)$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(OUT)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	@echo CXX $(notdir $@)
-	$(V)$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(V)$(CXX) -MMD $(CXXFLAGS) -c $< -o $@
 
 $(OUT)/%.o: %.S
 	@mkdir -p $(dir $@)

@@ -3,9 +3,9 @@
 #include <stdatomic.h>
 
 /* Global Variable */
-s16 Calibrattion_Val = 0;
-atomic_uint_fast16_t adcVal = 0;
-atomic_int haveData = 0;
+static s16 Calibrattion_Val = 0;
+static atomic_uint_fast16_t adcVal = 0;
+static atomic_int haveData = 0;
 
 void TIM1_PWMOut_Init(u16 arr, u16 psc, u16 ccp);
 void ADC_Function_Init(void);
@@ -14,10 +14,29 @@ void setup()
 {
     USART_Printf_Init(115200);
     SystemCoreClockUpdate();
-    printf("SystemClk:%d\r\n", SystemCoreClock);
-    printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
     TIM1_PWMOut_Init(100, 48000 - 1, 50);
     ADC_Function_Init();
+}
+
+static void uart_send_string(const char* s)
+{
+    while (*s) {
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
+            ;
+        USART_SendData(USART1, *s++);
+    }
+}
+
+static char* int2ascii(char* buf, size_t len, int v)
+{
+    char* ptr = buf + len;
+    *--ptr = '\0';
+    while (v) {
+        int c = v % 10;
+        *--ptr = '0' + c;
+        v /= 10;
+    }
+    return ptr;
 }
 
 int main(void)
@@ -26,24 +45,28 @@ int main(void)
     while (1) {
         if (atomic_fetch_and(&haveData, 0)) {
             int val = atomic_load(&adcVal);
-            printf("%04d\r\n", val);
+            static char buf[8];
+            char* s = int2ascii(buf, sizeof(buf), val);
+            uart_send_string(s);
+            uart_send_string("\r\n");
         }
     }
 }
 
-static inline int adcTestIRQ(ADC_TypeDef *adc, uint32_t flag)
+static inline int adcTestIRQ(ADC_TypeDef* adc, uint32_t flag)
 {
     return ((adc->STATR & (flag >> 8)) != 0) && (adc->CTLR1 & (uint8_t)flag);
 }
 
-static inline void adcClearIRQ(ADC_TypeDef *adc, uint32_t flag)
+static inline void adcClearIRQ(ADC_TypeDef* adc, uint32_t flag)
 {
     adc->STATR = ~(uint32_t)((uint8_t)(flag >> 8));
 }
 
-static inline u16 adcReadData(ADC_TypeDef *adc)
+static inline u16 adcReadData(ADC_TypeDef* adc)
 {
-    return adc->RDATAR;;
+    return adc->RDATAR;
+    ;
 }
 
 static inline int saturate(int val, int max, int min)
@@ -59,7 +82,7 @@ void ADC1_2_IRQHandler() __attribute__((interrupt("WCH-Interrupt-fast")));
 
 void ADC1_2_IRQHandler()
 {
-    if(adcTestIRQ(ADC1, ADC_IT_EOC)) {
+    if (adcTestIRQ(ADC1, ADC_IT_EOC)) {
         u16 RawAdc = adcReadData(ADC1);
         atomic_store(&adcVal, saturate(RawAdc + Calibrattion_Val, 4096, 0));
         atomic_store(&haveData, 1);

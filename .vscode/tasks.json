@@ -17,6 +17,12 @@
                 "/dev/ttyUSB2",
                 "/dev/ttyUSB3"
             ]
+        },
+        {
+            "id": "prjname",
+            "type": "promptString",
+            "description": "New Project Name",
+            "default": "new_project"
         }
     ],
     "tasks": [
@@ -76,6 +82,16 @@
                 "${input:serdev}"
             ],
             "isBackground": true
+        },
+        {
+            "label": "Create new C project from template",
+            "type": "shell",
+            "command": "${workspaceFolder}/local/new_project.sh ${input:prjname}"
+        },
+        {
+            "label": "Create new C++ project from template",
+            "type": "shell",
+            "command": "${workspaceFolder}/local/new_project.sh --cpp ${input:prjname}"
         }
     ]
 }

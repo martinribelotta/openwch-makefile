@@ -8,6 +8,7 @@
     "files.associations": {
         "eth_driver.h": "c",
         "debug.h": "c",
-        "ch32v30x.h": "c"
+        "ch32v30x.h": "c",
+        "hid_custom_inout.h": "c"
     }
 }
